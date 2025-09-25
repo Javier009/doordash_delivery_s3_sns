@@ -1,0 +1,15 @@
+version: 0.2
+phases:
+  build:
+    commands:
+    - mkdir lib
+    - echo Building the deployment package...
+    - cd lib
+    - zip -g -r9 mock-json-data-deployment-package.zip lambda_function.py
+  post_build:
+    commands:
+    - echo Build completed on `date`
+    - aws s3 cp mock-json-data-deployment-package.zip s3://doordash-delivery-data-code-base
+    - echo Now updatigng the lambda function code...
+    - aws lambda update-function-code --function-name doordash_input_json_files --s3-bucket doordash-delivery-data-code-base --s3-key mock-json-data-deployment-package.zip
+  
