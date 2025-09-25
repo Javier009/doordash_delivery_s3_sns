@@ -7,22 +7,17 @@ phases:
   build:
     commands:
       - set -eux
-      # show repo root so you can confirm paths
       - echo "Repo root:" && pwd && ls -la
-      # move into the folder that contains your handler
-      - cd mock_data_generation
+      - cd "$CODEBUILD_SRC_DIR/mock_data_generation"
       - echo "In mock_data_generation:" && pwd && ls -la
-      # ensure the file exists
       - test -f lambda_function.py
-      # create the deployment zip with the handler at the ZIP ROOT
       - zip -r9 package.zip lambda_function.py
-      # optional: list zip contents to verify
       - unzip -l package.zip
 
   post_build:
     commands:
-      # cd does NOT persist across phases—cd again
-      - cd mock_data_generation
+      # Working dir may reset; always cd via absolute path
+      - cd "$CODEBUILD_SRC_DIR/mock_data_generation"
       - echo "Updating Lambda function code..."
       - aws lambda update-function-code \
           --function-name doordash_input_json_files \
