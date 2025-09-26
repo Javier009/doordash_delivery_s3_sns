@@ -27,27 +27,31 @@ def generate_mock_data(num_records=100):
     return data
     
 def lambda_handler(event, context):
-    # Generate mock data
+     # Generate mock data and upload to S3
+    number_of_files = random.randint(2, 10)
+    print(f"Generating {number_of_files} mock data files")
     try:
-        records = random.randint(50, 150)  # Random number of records between 50 and 150
-        mock_data = generate_mock_data(num_records=records)
-        
-        # Convert to JSON Lines format
-        json_object = json.dumps(mock_data, indent=4)
+        for i in range(1, number_of_files + 1):
+            records = random.randint(50, 150)  # Random number of records between 50 and 150
+            mock_data = generate_mock_data(num_records=records)
+            
+            # Convert to JSON Lines format
+            json_object = json.dumps(mock_data, indent=4)
 
-        # Define S3 bucket and object key
-        bucket_name = 'doordash-delivery-data-json-input-files'
-        object_key = f'mock_data_{datetime.now().strftime("%Y%m%d-%H%M%S")}.json'
-        
-        # Upload to S3
-        s3_client.put_object(Body=json_object, Bucket=bucket_name, Key=object_key)
+            # Define S3 bucket and object key
+            bucket_name = 'doordash-delivery-data-json-input-files'
+            object_key = f'mock_data_{datetime.now().strftime("%Y%m%d-%H%M%S")}.json'
+            
+            # Upload to S3
+            s3_client.put_object(Body=json_object, Bucket=bucket_name, Key=object_key)
 
-        print(f"Mock data uploaded to s3://{bucket_name}/{object_key}")
+            print(f"File numner {i}: Mock data uploaded to s3://{bucket_name}/{object_key}")
 
         return {
             'statusCode': 200,
             'body': json.dumps(f'Mock data uploaded to s3://{bucket_name}/{object_key}')
-        }
+            }
+    
     except Exception as e:
         return {
             'statusCode': 500,
