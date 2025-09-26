@@ -1,5 +1,6 @@
 import json
 import random
+import time
 from datetime import datetime 
 
 import boto3
@@ -46,6 +47,8 @@ def lambda_handler(event, context):
             s3_client.put_object(Body=json_object, Bucket=bucket_name, Key=object_key)
 
             print(f"File numner {i}: Mock data uploaded to s3://{bucket_name}/{object_key}")
+
+            time.sleep(random.randint(1,5))  # Ensure unique timestamps for filenames
 
         return {
             'statusCode': 200,
