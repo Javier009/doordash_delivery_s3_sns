@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+  build:
+    commands:
+      - set -eux
+      - echo "Repo root:" && pwd && ls -la
+      - cd "$CODEBUILD_SRC_DIR/fetch_and_filter_data"
+      - echo "In fetch_and_filter_data:" && pwd && ls -la
+      - test -f fetch_and_filter_data.py
+      - zip -r9 package.zip fetch_and_filter_data.py
+      - unzip -l package.zip
+
+  post_build:
+    commands:
+      # Working dir may reset; always cd via absolute path
+      - cd "$CODEBUILD_SRC_DIR/mock_data_generation"
+      - echo "Updating Lambda function code..."
+      - aws lambda update-function-code --function-name doordash-datalake-trigger --zip-file fileb://package.zip
