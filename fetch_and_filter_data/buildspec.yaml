@@ -9,7 +9,7 @@ phases:
       - set -eux
       - echo "Repo root:" && pwd && ls -la
       - cd "$CODEBUILD_SRC_DIR/fetch_and_filter_data"
-      - echo "In fetch_delvered_orders:" && pwd && ls -la
+      - echo "In fetch_and_filter_data:" && pwd && ls -la
       - test -f fetch_delvered_orders.py 
       - zip -r9 package.zip fetch_delvered_orders.py
       - unzip -l package.zip
@@ -17,7 +17,7 @@ phases:
   post_build:
     commands:
       # Working dir may reset; always cd via absolute path
-      - cd "$CODEBUILD_SRC_DIR/mock_data_generation"
+      - cd "$CODEBUILD_SRC_DIR/fetch_and_filter_data"
       - echo "Updating Lambda function code..."
       - aws lambda update-function-code --function-name doordash-datalake-trigger --zip-file fileb://package.zip
 
