@@ -9,9 +9,9 @@ phases:
       - set -eux
       - echo "Repo root:" && pwd && ls -la
       - cd "$CODEBUILD_SRC_DIR/fetch_and_filter_data"
-      - echo "In fetch_and_filter_data:" && pwd && ls -la
-      - test -f fetch_and_filter_data.py
-      - zip -r9 package.zip fetch_and_filter_data.py
+      - echo "In fetch_delvered_orders:" && pwd && ls -la
+      - test -f fetch_delvered_orders.py 
+      - zip -r9 package.zip fetch_delvered_orders.py
       - unzip -l package.zip
 
   post_build:
@@ -20,3 +20,4 @@ phases:
       - cd "$CODEBUILD_SRC_DIR/mock_data_generation"
       - echo "Updating Lambda function code..."
       - aws lambda update-function-code --function-name doordash-datalake-trigger --zip-file fileb://package.zip
+
