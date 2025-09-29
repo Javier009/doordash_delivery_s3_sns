@@ -20,7 +20,5 @@ phases:
       - echo "Verifying absolute path exists..."
       - ls -la "$CODEBUILD_SRC_DIR/fetch_and_filter_data/package.zip"
       - echo "Updating Lambda function code..."
-      - aws lambda update-function-code \
-          --function-name doordash-datalake-trigger \
-          --zip-file "fileb://$CODEBUILD_SRC_DIR/fetch_and_filter_data/package.zip"
+      - aws lambda update-function-code --function-name doordash-datalake-trigger --zip-file "fileb://$CODEBUILD_SRC_DIR/fetch_and_filter_data/package.zip"
 
