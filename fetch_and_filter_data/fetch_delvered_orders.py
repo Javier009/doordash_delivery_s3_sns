@@ -2,6 +2,7 @@ import json
 import boto3
 
 s3_client = boto3.client('s3')
+sns_client = boto3.client('sns')
 
 def lambda_handler(event, context):
     try:
@@ -23,6 +24,18 @@ def lambda_handler(event, context):
                              Key = destination_file_name,
                             Body = delivered_orders_json_object)
         print(f"Delivered orders written to s3://{DESTINATION_BUCKET}/{destination_file_name}")
+
+        # Send Notification to SNS Topic
+        sns_topic_arn = 'arn:aws:sns:us-east-1:652734276321:door-dash-delivered-file-processed-topic'
+        sns_message = f"Delivered orders file created: s3://{DESTINATION_BUCKET}/{destination_file_name}"
+        sns_subject = "New Delivered Orders File Created"
+        sns_client.publish(
+            TopicArn=sns_topic_arn,
+            Message=sns_message,
+            Subject=sns_subject
+        )
+        print(f"SNS notification sent to topic {sns_topic_arn}")
+
         return {
             'statusCode': 200,
             'body': json.dumps(f'Delivered orders written to s3://{DESTINATION_BUCKET}/{destination_file_name}')
